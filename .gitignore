@@ -1,0 +1,10 @@
+config.json
+donation-ledger.json
+donation-ledger.json.tmp
+donationalerts-auth.json
+donationalerts-auth.json.tmp
+donationalerts-state.json
+donationalerts-state.json.tmp
+memo-world.zip
+screenshot*.png
+node_modules/
