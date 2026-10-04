@@ -1,0 +1,47 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3000
+  },
+  "youtube": {
+    "videoUrl": "",
+    "apiKey": "",
+    "retrySeconds": 15
+  },
+  "game": {
+    "waitSeconds": 15,
+    "revealSeconds": 3,
+    "sounds": true,
+    "voice": true,
+    "streamMode": false
+  },
+  "speech": {
+    "language": "ru-RU",
+    "rate": 0.95
+  },
+  "theme": "classic",
+  "donations": {
+    "enabled": false,
+    "currency": "USD",
+    "hintAmount": 1,
+    "nameAmount": 5,
+    "hintSeconds": 8,
+    "nameRotationSeconds": 5,
+    "paymentUrl": "",
+    "webhookSecret": "",
+    "overlayToken": "",
+    "provider": "donationalerts",
+    "revealAllAmount": 9.99,
+    "revealAllSeconds": 8
+  },
+  "donationAlerts": {
+    "accessToken": "",
+    "refreshToken": "",
+    "clientId": "",
+    "clientSecret": "",
+    "redirectUrl": "http://localhost:3000/api/donations/donationalerts/callback",
+    "pollSeconds": 5,
+    "retrySeconds": 30,
+    "maxPages": 20
+  }
+}

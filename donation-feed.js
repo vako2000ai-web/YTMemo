@@ -1,0 +1,10 @@
+import {createHmac,timingSafeEqual} from 'node:crypto';
+import fs from 'node:fs';
+import {donationReward} from './donations.js';
+export function validSignature(body,signature,secret){if(!secret||typeof signature!=='string')return false;const raw=signature.replace(/^sha256=/,'');if(!/^[a-f0-9]{64}$/i.test(raw))return false;return timingSafeEqual(Buffer.from(raw,'hex'),createHmac('sha256',secret).update(body).digest());}
+export function validToken(header,token){if(!token||typeof header!=='string'||!header.startsWith('Bearer '))return false;const supplied=Buffer.from(header.slice(7)),expected=Buffer.from(token);return supplied.length===expected.length&&timingSafeEqual(supplied,expected);}
+export class DonationFeed{
+ constructor(options={},file=null){this.options=options;this.file=file;this.events=[];this.ids=new Set();this.cursor=0;if(file&&fs.existsSync(file)){const saved=JSON.parse(fs.readFileSync(file,'utf8'));this.events=saved.events;this.ids=new Set(saved.ids);this.cursor=saved.cursor;}}
+ receive(event){const reward=donationReward(event,this.options);if(!reward)throw Error('Некорректный донат или сумма ниже цены бонуса.');if(this.ids.has(reward.id))return {duplicate:true,cursor:this.cursor};const normalized={...reward,card:reward.card??undefined,cursor:this.cursor+1,receivedAt:new Date().toISOString()};const nextEvents=[...this.events,normalized].slice(-1000);const nextIds=[...this.ids,reward.id];if(this.file){fs.writeFileSync(this.file+'.tmp',JSON.stringify({events:nextEvents,ids:nextIds,cursor:normalized.cursor}),{mode:0o600});fs.renameSync(this.file+'.tmp',this.file);}this.events=nextEvents;this.ids.add(reward.id);this.cursor++;return {duplicate:false,cursor:this.cursor};}
+ read(after){if(after!==null&&(!Number.isSafeInteger(after)||after<0||after>this.cursor))throw Error('Некорректная позиция в очереди донатов.');if(after!==null&&this.events.length&&after<this.events[0].cursor-1)throw Error('История донатов для этого подключения устарела. Переподключите бонусы.');return {cursor:this.cursor,events:after===null?[]:this.events.filter(e=>e.cursor>after)};}
+}
