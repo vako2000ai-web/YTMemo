@@ -1,12 +1,13 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {YouTubeChat,videoId} from './youtube-chat.js';
 import {config,publicConfig} from './config.js';
 import {DonationFeed,validSignature,validToken} from './donation-feed.js';
 import {DonationAlerts} from './donationalerts.js';
 const chat=new YouTubeChat({key:process.env.YOUTUBE_API_KEY||config.youtube.apiKey});
-const root = path.dirname(new URL(import.meta.url).pathname);
+const root = path.dirname(fileURLToPath(import.meta.url));
 const donationFeed=new DonationFeed(config.donations,process.env.DONATION_LEDGER_PATH||path.join(root,'donation-ledger.json'));
 const webhookSecret=process.env.DONATION_WEBHOOK_SECRET||config.donations.webhookSecret;
 const overlayToken=process.env.DONATION_OVERLAY_TOKEN||config.donations.overlayToken;
